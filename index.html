@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БАНДИТ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="ui-overlay">
+            <div class="ui-panel">
+                <span class="ui-label">СЧЁТ</span>
+                <span id="score">0</span>
+            </div>
+            <div class="ui-panel">
+                <span class="ui-label">КОМБО</span>
+                <span id="combo">x1</span>
+            </div>
+            <div class="ui-panel">
+                <span class="ui-label">ЖИЗНИ</span>
+                <span id="lives">♥♥♥</span>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="startScreen" class="screen">
+            <div class="screen-content">
+                <h1 class="game-title">БАНДИТ</h1>
+                <p class="game-subtitle">Прыгай · Собирай · Выживай</p>
+
+                <div class="avatar-upload">
+                    <div class="avatar-preview" id="avatarPreview">
+                        <div class="avatar-placeholder">📷</div>
+                        <div class="avatar-loader" id="avatarLoader">
+                            <div class="loader-spinner"></div>
+                            <span>Обработка...</span>
+                        </div>
+                    </div>
+                    <label for="avatarInput" class="btn-avatar">Загрузить лицо</label>
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none">
+                    <p class="avatar-hint">✨ Белый фон удалится автоматически</p>
+                    <button id="clearAvatar" class="btn-clear-avatar" style="display:none">✕ Убрать</button>
+                </div>
+
+                <div class="controls-hint">
+                    <div class="key">←</div>
+                    <div class="key">→</div>
+                    <div class="key">␣</div>
+                </div>
+                <p class="controls-text">Стрелки — движение · Пробел — супер-прыжок</p>
+                <button id="startBtn" class="btn-start">НАЧАТЬ ИГРУ</button>
+            </div>
+        </div>
+
+        <div id="gameOverScreen" class="screen hidden">
+            <div class="screen-content">
+                <h1 class="game-title gameover">GAME OVER</h1>
+                <p class="final-score">Счёт: <span id="finalScore">0</span></p>
+                <p class="best-score">Рекорд: <span id="bestScore">0</span></p>
+                <button id="restartBtn" class="btn-start">ЗАНОВО</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
