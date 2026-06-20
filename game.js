@@ -60,13 +60,11 @@ class Mattress {
 
         ctx.save();
 
-        // Тень
         ctx.fillStyle = 'rgba(0,0,0,0.2)';
         ctx.beginPath();
         ctx.ellipse(this.x + this.width/2, screenY + this.height + 5, this.width/2 + 4, 6, 0, 0, Math.PI*2);
         ctx.fill();
 
-        // Матрас
         const gradient = ctx.createLinearGradient(this.x, screenY, this.x, screenY + this.height);
         gradient.addColorStop(0, lightenColor(this.color, 30));
         gradient.addColorStop(1, this.color);
@@ -75,7 +73,6 @@ class Mattress {
         ctx.roundRect(this.x, screenY - squashOffset, this.width, this.height + squashOffset*2, [8, 8, 4, 4]);
         ctx.fill();
 
-        // Штриховка
         ctx.strokeStyle = lightenColor(this.color, 50);
         ctx.lineWidth = 1;
         ctx.setLineDash([3, 4]);
@@ -85,7 +82,6 @@ class Mattress {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Иконки типа
         if (this.type === 'bouncy') {
             ctx.strokeStyle = '#fdcb6e';
             ctx.lineWidth = 2;
@@ -252,7 +248,6 @@ class Player {
         this.x += this.vel.x;
         this.y += this.vel.y;
 
-        // Телепортация через края
         if (this.x > canvasWidth + this.width) this.x = -this.width;
         if (this.x < -this.width) this.x = canvasWidth + this.width;
 
@@ -286,7 +281,6 @@ class Player {
             ctx.globalAlpha = 0.4;
         }
 
-        // След
         this.trail.forEach((t, i) => {
             if (t.life > 0) {
                 ctx.fillStyle = `rgba(108, 92, 231, ${t.life * 0.2})`;
@@ -296,7 +290,6 @@ class Player {
             }
         });
 
-        // Тень
         ctx.fillStyle = 'rgba(0,0,0,0.3)';
         ctx.beginPath();
         ctx.ellipse(cx, screenY + this.height + 3, 14, 4, 0, 0, Math.PI*2);
@@ -304,17 +297,14 @@ class Player {
 
         const legOffset = this.onGround ? Math.sin(this.animFrame * Math.PI/2) * 5 : 0;
 
-        // Ноги
         ctx.fillStyle = colors.pants;
         ctx.fillRect(cx - 10, screenY + 35 + legOffset, 8, 15 - legOffset);
         ctx.fillRect(cx + 2, screenY + 35 - legOffset, 8, 15 + legOffset);
 
-        // Ботинки
         ctx.fillStyle = '#2d3436';
         ctx.fillRect(cx - 12, screenY + 46 + legOffset, 12, 5);
         ctx.fillRect(cx, screenY + 46 - legOffset, 12, 5);
 
-        // Футболка
         ctx.fillStyle = colors.shirt;
         ctx.beginPath();
         ctx.roundRect(cx - 12, screenY + 18, 24, 22, 4);
@@ -322,7 +312,6 @@ class Player {
         ctx.fillStyle = lightenColor(colors.shirt, 20);
         ctx.fillRect(cx - 3, screenY + 20, 6, 18);
 
-        // Руки
         ctx.fillStyle = colors.skin;
         const armSwing = this.onGround ? Math.sin(this.animFrame * Math.PI/2) * 8 : -5;
 
@@ -338,18 +327,15 @@ class Player {
         ctx.fillRect(-3, 0, 6, 16);
         ctx.restore();
 
-        // === ГОЛОВА ===
         const headX = cx;
         const headY = screenY + 12;
         const headRadius = 12;
 
-        // Волосы под шапкой
         ctx.fillStyle = colors.hair;
         ctx.beginPath();
         ctx.ellipse(headX, headY - 6, 13, 8, 0, 0, Math.PI*2);
         ctx.fill();
 
-        // Шапка
         ctx.fillStyle = '#2d3436';
         ctx.beginPath();
         ctx.ellipse(headX, headY - 7, 14, 6, 0, Math.PI, Math.PI*2);
@@ -357,7 +343,6 @@ class Player {
         ctx.fillRect(headX + (this.facing === 1 ? 4 : -14), headY - 4, 10, 3);
 
         if (playerAvatarImage && playerAvatarImage.complete && playerAvatarImage.naturalWidth > 0) {
-            // === С ФОТО ===
             ctx.save();
             ctx.beginPath();
             ctx.arc(headX, headY, headRadius, 0, Math.PI*2);
@@ -372,7 +357,6 @@ class Player {
             ctx.arc(headX, headY, headRadius, 0, Math.PI*2);
             ctx.stroke();
         } else {
-            // === БЕЗ ФОТО ===
             ctx.fillStyle = colors.skin;
             ctx.beginPath();
             ctx.arc(headX, headY, headRadius, 0, Math.PI*2);
@@ -432,12 +416,20 @@ class Game {
         this.cameraY = 0;
         this.targetCameraY = 0;
 
-        // Флаги ввода — КЛЮЧЕВОЕ для исправления бага с пробелом
         this.input = {
             left: false,
             right: false,
-            superJumpPressed: false
+            superJumpPressed: false,
+            jumpPressed: false
         };
+
+        this.touchButtons = {
+            left: { active: false, id: null },
+            right: { active: false, id: null },
+            jump: { active: false, id: null }
+        };
+
+        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         this.resize();
         this.init();
@@ -493,14 +485,13 @@ class Game {
     setupEvents() {
         window.addEventListener('resize', () => this.resize());
 
-        // === ИСПРАВЛЕНИЕ БАГА ПРОБЕЛА ===
+        // Клавиатура
         document.addEventListener('keydown', (e) => {
             if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.input.left = true;
             if (e.code === 'ArrowRight' || e.code === 'KeyD') this.input.right = true;
 
             if (e.code === 'Space') {
                 e.preventDefault();
-                // Срабатывает ТОЛЬКО при первом нажатии, не при удержании
                 if (!this.input.superJumpPressed) {
                     this.input.superJumpPressed = true;
                     if (this.state === 'playing') this.useSuperJump();
@@ -517,7 +508,7 @@ class Game {
         document.getElementById('startBtn').addEventListener('click', () => this.startGame());
         document.getElementById('restartBtn').addEventListener('click', () => this.restart());
 
-        // === ЗАГРУЗКА ФОТО ===
+        // Загрузка фото
         const avatarInput = document.getElementById('avatarInput');
         const avatarPreview = document.getElementById('avatarPreview');
         const avatarLoader = document.getElementById('avatarLoader');
@@ -549,7 +540,6 @@ class Game {
                         avatarPreview.classList.add('has-image');
                         clearBtn.style.display = 'inline-block';
 
-                        // Восстанавливаем лоадер для повторных загрузок
                         const loader = document.createElement('div');
                         loader.className = 'avatar-loader';
                         loader.id = 'avatarLoader';
@@ -589,20 +579,174 @@ class Game {
             clearBtn.style.display = 'none';
         });
 
-        // Мобильное управление
-        let touchStartX = 0;
+        // === МОБИЛЬНОЕ УПРАВЛЕНИЕ С КНОПКАМИ ===
+        this.setupMobileControls();
+    }
+
+    setupMobileControls() {
+        // Создаём кнопки управления
+        this.createMobileButtons();
+
+        // Обработка тачей
         this.canvas.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-        });
+            e.preventDefault();
+            this.handleTouch(e.touches);
+        }, { passive: false });
+
         this.canvas.addEventListener('touchmove', (e) => {
-            const diff = e.touches[0].clientX - touchStartX;
-            this.input.left = diff < -30;
-            this.input.right = diff > 30;
+            e.preventDefault();
+            this.handleTouch(e.touches);
+        }, { passive: false });
+
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.handleTouchEnd(e);
         });
-        this.canvas.addEventListener('touchend', () => {
+
+        this.canvas.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            this.handleTouchEnd(e);
+        });
+    }
+
+    createMobileButtons() {
+        // Создаём контейнер для кнопок
+        const controlsDiv = document.createElement('div');
+        controlsDiv.id = 'mobileControls';
+        controlsDiv.className = 'mobile-controls';
+        controlsDiv.innerHTML = `
+            <div class="mobile-buttons-left">
+                <div class="mobile-btn" id="btnLeft">←</div>
+                <div class="mobile-btn" id="btnRight">→</div>
+            </div>
+            <div class="mobile-buttons-right">
+                <div class="mobile-btn jump-btn" id="btnJump">⤒</div>
+            </div>
+        `;
+        
+        document.querySelector('.game-container').appendChild(controlsDiv);
+
+        // Привязка событий к кнопкам
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnJump = document.getElementById('btnJump');
+
+        // Левая кнопка
+        btnLeft.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.input.left = true;
+            btnLeft.classList.add('active');
+        });
+        btnLeft.addEventListener('touchend', (e) => {
+            e.preventDefault();
             this.input.left = false;
-            this.input.right = false;
+            btnLeft.classList.remove('active');
         });
+        btnLeft.addEventListener('mousedown', () => {
+            this.input.left = true;
+            btnLeft.classList.add('active');
+        });
+        btnLeft.addEventListener('mouseup', () => {
+            this.input.left = false;
+            btnLeft.classList.remove('active');
+        });
+        btnLeft.addEventListener('mouseleave', () => {
+            this.input.left = false;
+            btnLeft.classList.remove('active');
+        });
+
+        // Правая кнопка
+        btnRight.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.input.right = true;
+            btnRight.classList.add('active');
+        });
+        btnRight.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.input.right = false;
+            btnRight.classList.remove('active');
+        });
+        btnRight.addEventListener('mousedown', () => {
+            this.input.right = true;
+            btnRight.classList.add('active');
+        });
+        btnRight.addEventListener('mouseup', () => {
+            this.input.right = false;
+            btnRight.classList.remove('active');
+        });
+        btnRight.addEventListener('mouseleave', () => {
+            this.input.right = false;
+            btnRight.classList.remove('active');
+        });
+
+        // Кнопка прыжка
+        btnJump.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (this.state === 'playing') {
+                this.player.jump(false);
+                this.sound.jump();
+                this.particles.emit(
+                    this.player.x + this.player.width/2,
+                    this.player.y + this.player.height,
+                    '#a29bfe', 8, { speed: 4, upward: 2 }
+                );
+            }
+            btnJump.classList.add('active');
+        });
+        btnJump.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            btnJump.classList.remove('active');
+        });
+        btnJump.addEventListener('mousedown', () => {
+            if (this.state === 'playing') {
+                this.player.jump(false);
+                this.sound.jump();
+                this.particles.emit(
+                    this.player.x + this.player.width/2,
+                    this.player.y + this.player.height,
+                    '#a29bfe', 8, { speed: 4, upward: 2 }
+                );
+            }
+            btnJump.classList.add('active');
+        });
+        btnJump.addEventListener('mouseup', () => {
+            btnJump.classList.remove('active');
+        });
+    }
+
+    handleTouch(touches) {
+        // Сбрасываем
+        this.input.left = false;
+        this.input.right = false;
+
+        // Проверяем каждую точку касания
+        for (let i = 0; i < touches.length; i++) {
+            const touch = touches[i];
+            const x = touch.clientX;
+            const width = window.innerWidth;
+
+            // Левая половина экрана — движение влево
+            if (x < width / 2) {
+                this.input.left = true;
+            }
+            // Правая половина (кроме нижней правой части где прыжок) — движение вправо
+            else if (x > width / 2 && x < width - 80) {
+                this.input.right = true;
+            }
+        }
+    }
+
+    handleTouchEnd(e) {
+        // Проверяем оставшиеся касания
+        if (e.changedTouches.length > 0) {
+            setTimeout(() => {
+                const remainingTouches = document.querySelectorAll('.mobile-btn.active');
+                if (remainingTouches.length === 0) {
+                    this.input.left = false;
+                    this.input.right = false;
+                }
+            }, 50);
+        }
     }
 
     startGame() {
@@ -610,12 +754,23 @@ class Game {
         this.state = 'playing';
         document.getElementById('startScreen').classList.add('hidden');
         document.getElementById('gameOverScreen').classList.add('hidden');
+        
+        // Показываем мобильные кнопки только на мобильных
+        const controls = document.getElementById('mobileControls');
+        if (controls) {
+            controls.style.display = this.isMobile ? 'flex' : 'none';
+        }
     }
 
     restart() {
         this.init();
         this.state = 'playing';
         document.getElementById('gameOverScreen').classList.add('hidden');
+        
+        const controls = document.getElementById('mobileControls');
+        if (controls) {
+            controls.style.display = this.isMobile ? 'flex' : 'none';
+        }
     }
 
     useSuperJump() {
@@ -645,6 +800,9 @@ class Game {
         document.getElementById('finalScore').textContent = this.score;
         document.getElementById('bestScore').textContent = this.bestScore;
         document.getElementById('gameOverScreen').classList.remove('hidden');
+
+        const controls = document.getElementById('mobileControls');
+        if (controls) controls.style.display = 'none';
     }
 
     update() {
@@ -656,7 +814,6 @@ class Game {
         this.player.update(this.input, this.width);
         this.player.onGround = false;
 
-        // Столкновения с матрасами
         for (const m of this.mattresses) {
             if (m.broken) continue;
             const playerHB = this.player.getHitbox();
@@ -690,7 +847,6 @@ class Game {
             m.update();
         }
 
-        // Сбор предметов
         const playerHB = this.player.getHitbox();
         for (const c of this.collectibles) {
             if (c.collected) continue;
@@ -706,25 +862,21 @@ class Game {
             }
         }
 
-        // Камера
         const playerScreenY = this.player.y - this.cameraY;
         if (playerScreenY < this.height * 0.4) {
             this.targetCameraY = this.player.y - this.height * 0.4;
         }
         this.cameraY += (this.targetCameraY - this.cameraY) * CONFIG.cameraSmooth;
 
-        // Счёт за высоту
         if (this.player.y < this.highestY) {
             const gained = Math.floor((this.highestY - this.player.y) * 0.1);
             this.score += gained * this.combo;
             this.highestY = this.player.y;
         }
 
-        // Комбо таймер
         if (this.comboTimer > 0) this.comboTimer--;
         else if (this.combo > 1) this.combo = 1;
 
-        // Генерация новых матрасов
         const topEdge = this.cameraY - 100;
         const highestMattress = Math.min(...this.mattresses.map(m => m.y));
         while (highestMattress > topEdge - 300) {
@@ -732,13 +884,11 @@ class Game {
             break;
         }
 
-        // Удаление старых
         this.mattresses = this.mattresses.filter(m => m.y - this.cameraY < this.height + 200);
         this.collectibles = this.collectibles.filter(c => !c.collected && c.y - this.cameraY < this.height + 200);
 
         this.particles.update();
 
-        // Падение
         if (this.player.y - this.cameraY > this.height + 100) {
             this.lives--;
             this.sound.hit();
@@ -819,7 +969,6 @@ class Game {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, this.width, this.height);
 
-        // Параллакс фигуры
         ctx.save();
         ctx.globalAlpha = 0.03;
         const offset = this.cameraY * 0.1;
@@ -845,7 +994,6 @@ class Game {
         }
         ctx.restore();
 
-        // Звёзды
         ctx.save();
         ctx.globalAlpha = 0.5;
         for (let i = 0; i < 50; i++) {
