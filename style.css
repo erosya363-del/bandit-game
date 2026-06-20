@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 :root {
     --bg: #0a0a0f;
@@ -40,9 +44,12 @@ body {
     height: 100%;
 }
 
+/* UI поверх игрового поля */
 .ui-overlay {
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     padding: 20px 30px;
     display: flex;
     justify-content: space-between;
@@ -86,8 +93,9 @@ body {
     color: var(--accent-4);
     transition: transform 0.15s ease;
 }
-
-#combo.pulse { transform: scale(1.4); }
+#combo.pulse {
+    transform: scale(1.4);
+}
 
 #lives {
     font-size: 22px;
@@ -95,6 +103,7 @@ body {
     letter-spacing: 4px;
 }
 
+/* Экраны */
 .screen {
     position: absolute;
     inset: 0;
@@ -107,18 +116,24 @@ body {
     -webkit-backdrop-filter: blur(30px);
     animation: fadeIn 0.4s ease;
 }
-
-.screen.hidden { display: none; }
+.screen.hidden {
+    display: none;
+}
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .screen-content {
     text-align: center;
     padding: 40px;
-    max-width: 400px;
+    max-width: 440px;
+    width: 100%;
 }
 
 .game-title {
@@ -131,7 +146,6 @@ body {
     background-clip: text;
     margin-bottom: 12px;
 }
-
 .game-title.gameover {
     background: linear-gradient(135deg, #e17055, #fd79a8);
     -webkit-background-clip: text;
@@ -144,17 +158,70 @@ body {
     color: var(--text-dim);
     letter-spacing: 4px;
     text-transform: uppercase;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
+/* Имя */
+.name-input-wrap {
+    margin-bottom: 16px;
+}
+.player-name-input {
+    width: 100%;
+    max-width: 260px;
+    padding: 12px 20px;
+    border-radius: 40px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s;
+    font-family: inherit;
+}
+.player-name-input:focus {
+    border-color: var(--accent-1);
+}
+
+/* Выбор сложности */
+.difficulty-selector {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.difficulty-btn {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--text-dim);
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+}
+.difficulty-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+.difficulty-btn.active {
+    background: var(--accent-1);
+    border-color: var(--accent-1);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
+}
+
+/* Аватар */
 .avatar-upload {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
-
 .avatar-preview {
     width: 110px;
     height: 110px;
@@ -169,28 +236,23 @@ body {
     transition: all 0.3s ease;
     cursor: pointer;
 }
-
 .avatar-preview:hover {
     border-color: var(--accent-1);
     transform: scale(1.05);
 }
-
 .avatar-preview.has-image {
     border: 3px solid var(--accent-1);
     box-shadow: 0 0 30px rgba(108, 92, 231, 0.5);
 }
-
 .avatar-preview img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 .avatar-placeholder {
     font-size: 40px;
     opacity: 0.5;
 }
-
 .avatar-loader {
     position: absolute;
     inset: 0;
@@ -203,16 +265,15 @@ body {
     gap: 8px;
     border-radius: 50%;
 }
-
-.avatar-loader.active { display: flex; }
-
+.avatar-loader.active {
+    display: flex;
+}
 .avatar-loader span {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
-
 .loader-spinner {
     width: 28px;
     height: 28px;
@@ -221,14 +282,15 @@ body {
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
 .avatar-hint {
     font-size: 11px;
     color: var(--text-dim);
 }
-
 .btn-avatar {
     background: var(--glass);
     border: 1px solid var(--glass-border);
@@ -244,13 +306,11 @@ body {
     backdrop-filter: blur(10px);
     font-family: inherit;
 }
-
 .btn-avatar:hover {
     background: var(--accent-1);
     border-color: var(--accent-1);
     transform: translateY(-2px);
 }
-
 .btn-clear-avatar {
     background: transparent;
     border: none;
@@ -262,18 +322,17 @@ body {
     border-radius: 20px;
     font-family: inherit;
 }
-
 .btn-clear-avatar:hover {
     background: rgba(253, 121, 168, 0.15);
 }
 
+/* Клавиши управления */
 .controls-hint {
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
-
 .key {
     width: 48px;
     height: 48px;
@@ -286,24 +345,19 @@ body {
     font-size: 18px;
     font-weight: 600;
 }
-
 .controls-text {
     font-size: 12px;
     color: var(--text-dim);
-    margin-bottom: 40px;
+    margin-bottom: 24px;
 }
 
-.final-score, .best-score {
-    font-size: 18px;
-    margin-bottom: 12px;
-    color: var(--text-dim);
+/* Кнопки действий */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
 }
-
-.final-score span, .best-score span {
-    font-weight: 800;
-    color: var(--accent-4);
-}
-
 .btn-start {
     background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
     color: white;
@@ -319,13 +373,86 @@ body {
     box-shadow: 0 8px 30px rgba(108, 92, 231, 0.4);
     font-family: inherit;
 }
-
 .btn-start:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 40px rgba(108, 92, 231, 0.6);
 }
+.btn-leaderboard {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.3s;
+}
+.btn-leaderboard:hover {
+    color: var(--accent-4);
+}
 
-/* МОБИЛЬНЫЕ КНОПКИ */
+/* Таблица рекордов */
+.leaderboard {
+    margin: 16px 0;
+    background: var(--glass);
+    border-radius: 16px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+}
+.leaderboard h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--accent-4);
+}
+.leaderboard-list {
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+}
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 8px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.leaderboard-item:last-child {
+    border-bottom: none;
+}
+.leaderboard-item .rank {
+    color: var(--text-dim);
+    margin-right: 12px;
+}
+.leaderboard-item .name {
+    font-weight: 500;
+}
+.leaderboard-item .score {
+    font-weight: 700;
+    color: var(--accent-4);
+}
+.leaderboard-item.current {
+    background: rgba(108, 92, 231, 0.2);
+    border-radius: 6px;
+}
+
+/* Экран Game Over */
+.final-score,
+.best-score {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--text-dim);
+}
+.final-score span,
+.best-score span {
+    font-weight: 800;
+    color: var(--accent-4);
+}
+#gameOverLeaderboard {
+    margin-top: 16px;
+}
+
+/* Мобильные кнопки */
 .mobile-controls {
     position: absolute;
     bottom: 30px;
@@ -337,26 +464,22 @@ body {
     z-index: 50;
     pointer-events: none;
 }
-
 .mobile-buttons-left,
 .mobile-buttons-right {
     display: flex;
     gap: 15px;
     pointer-events: auto;
 }
-
 .mobile-buttons-left {
     position: absolute;
     left: 20px;
     bottom: 20px;
 }
-
 .mobile-buttons-right {
     position: absolute;
     right: 20px;
     bottom: 20px;
 }
-
 .mobile-btn {
     width: 70px;
     height: 70px;
@@ -377,7 +500,6 @@ body {
     transition: all 0.1s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
-
 .mobile-btn:active,
 .mobile-btn.active {
     background: rgba(108, 92, 231, 0.6);
@@ -385,12 +507,10 @@ body {
     transform: scale(0.95);
     box-shadow: 0 2px 10px rgba(108, 92, 231, 0.5);
 }
-
 .jump-btn {
     background: rgba(253, 121, 168, 0.2);
     border-color: rgba(253, 121, 168, 0.4);
 }
-
 .jump-btn:active,
 .jump-btn.active {
     background: rgba(253, 121, 168, 0.6);
@@ -401,23 +521,40 @@ body {
     .mobile-controls {
         display: flex !important;
     }
-    
     .mobile-btn {
         width: 75px;
         height: 75px;
         font-size: 32px;
     }
-    
-    .game-title { font-size: 42px; letter-spacing: 4px; }
-    .ui-overlay { padding: 12px 16px; }
-    .ui-panel { min-width: 60px; padding: 8px 12px; }
-    #score { font-size: 20px; }
+    .game-title {
+        font-size: 42px;
+        letter-spacing: 4px;
+    }
+    .ui-overlay {
+        padding: 12px 16px;
+    }
+    .ui-panel {
+        min-width: 60px;
+        padding: 8px 12px;
+    }
+    #score {
+        font-size: 20px;
+    }
+    .screen-content {
+        padding: 20px;
+    }
 }
-
 @media (max-width: 480px) {
     .mobile-btn {
         width: 65px;
         height: 65px;
         font-size: 28px;
+    }
+    .difficulty-selector {
+        flex-wrap: wrap;
+    }
+    .difficulty-btn {
+        padding: 6px 14px;
+        font-size: 12px;
     }
 }
