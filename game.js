@@ -1,5 +1,3 @@
-// ============= GAME.JS =============
-
 const CONFIG = {
     gravity: 0.45,
     jumpForce: -13,
@@ -22,7 +20,6 @@ const CONFIG = {
 
 let playerAvatarImage = null;
 
-// ============ МАТРАС ============
 class Mattress {
     constructor(x, y, width, colorIndex = 0) {
         this.x = x;
@@ -114,7 +111,6 @@ class Mattress {
     }
 }
 
-// ============ КОЛЛЕКЦИОННЫЙ ПРЕДМЕТ ============
 class Collectible {
     constructor(x, y, type) {
         this.x = x;
@@ -221,7 +217,6 @@ class Collectible {
     getHitbox() { return { x: this.x, y: this.y, width: this.width, height: this.height }; }
 }
 
-// ============ ИГРОК ============
 class Player {
     constructor(x, y) {
         this.x = x;
@@ -397,7 +392,6 @@ class Player {
     }
 }
 
-// ============ ОСНОВНАЯ ИГРА ============
 class Game {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
@@ -419,14 +413,7 @@ class Game {
         this.input = {
             left: false,
             right: false,
-            superJumpPressed: false,
-            jumpPressed: false
-        };
-
-        this.touchButtons = {
-            left: { active: false, id: null },
-            right: { active: false, id: null },
-            jump: { active: false, id: null }
+            superJumpPressed: false
         };
 
         this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -485,7 +472,6 @@ class Game {
     setupEvents() {
         window.addEventListener('resize', () => this.resize());
 
-        // Клавиатура
         document.addEventListener('keydown', (e) => {
             if (e.code === 'ArrowLeft' || e.code === 'KeyA') this.input.left = true;
             if (e.code === 'ArrowRight' || e.code === 'KeyD') this.input.right = true;
@@ -508,7 +494,6 @@ class Game {
         document.getElementById('startBtn').addEventListener('click', () => this.startGame());
         document.getElementById('restartBtn').addEventListener('click', () => this.restart());
 
-        // Загрузка фото
         const avatarInput = document.getElementById('avatarInput');
         const avatarPreview = document.getElementById('avatarPreview');
         const avatarLoader = document.getElementById('avatarLoader');
@@ -546,7 +531,7 @@ class Game {
                         loader.innerHTML = '<div class="loader-spinner"></div><span>Обработка...</span>';
                         avatarPreview.appendChild(loader);
                     } catch (err) {
-                        console.error('Ошибка обработки:', err);
+                        console.error('Ошибка:', err);
                         playerAvatarImage = img;
                         avatarPreview.innerHTML = '';
                         const previewImg = document.createElement('img');
@@ -579,38 +564,10 @@ class Game {
             clearBtn.style.display = 'none';
         });
 
-        // === МОБИЛЬНОЕ УПРАВЛЕНИЕ С КНОПКАМИ ===
         this.setupMobileControls();
     }
 
     setupMobileControls() {
-        // Создаём кнопки управления
-        this.createMobileButtons();
-
-        // Обработка тачей
-        this.canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.handleTouch(e.touches);
-        }, { passive: false });
-
-        this.canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            this.handleTouch(e.touches);
-        }, { passive: false });
-
-        this.canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            this.handleTouchEnd(e);
-        });
-
-        this.canvas.addEventListener('touchcancel', (e) => {
-            e.preventDefault();
-            this.handleTouchEnd(e);
-        });
-    }
-
-    createMobileButtons() {
-        // Создаём контейнер для кнопок
         const controlsDiv = document.createElement('div');
         controlsDiv.id = 'mobileControls';
         controlsDiv.className = 'mobile-controls';
@@ -620,133 +577,47 @@ class Game {
                 <div class="mobile-btn" id="btnRight">→</div>
             </div>
             <div class="mobile-buttons-right">
-                <div class="mobile-btn jump-btn" id="btnJump">⤒</div>
+                <div class="mobile-btn jump-btn" id="btnJump"></div>
             </div>
         `;
         
         document.querySelector('.game-container').appendChild(controlsDiv);
 
-        // Привязка событий к кнопкам
         const btnLeft = document.getElementById('btnLeft');
         const btnRight = document.getElementById('btnRight');
         const btnJump = document.getElementById('btnJump');
 
-        // Левая кнопка
-        btnLeft.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.input.left = true;
-            btnLeft.classList.add('active');
-        });
-        btnLeft.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            this.input.left = false;
-            btnLeft.classList.remove('active');
-        });
-        btnLeft.addEventListener('mousedown', () => {
-            this.input.left = true;
-            btnLeft.classList.add('active');
-        });
-        btnLeft.addEventListener('mouseup', () => {
-            this.input.left = false;
-            btnLeft.classList.remove('active');
-        });
-        btnLeft.addEventListener('mouseleave', () => {
-            this.input.left = false;
-            btnLeft.classList.remove('active');
-        });
+        btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); this.input.left = true; btnLeft.classList.add('active'); });
+        btnLeft.addEventListener('touchend', (e) => { e.preventDefault(); this.input.left = false; btnLeft.classList.remove('active'); });
+        btnLeft.addEventListener('mousedown', () => { this.input.left = true; btnLeft.classList.add('active'); });
+        btnLeft.addEventListener('mouseup', () => { this.input.left = false; btnLeft.classList.remove('active'); });
+        btnLeft.addEventListener('mouseleave', () => { this.input.left = false; btnLeft.classList.remove('active'); });
 
-        // Правая кнопка
-        btnRight.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.input.right = true;
-            btnRight.classList.add('active');
-        });
-        btnRight.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            this.input.right = false;
-            btnRight.classList.remove('active');
-        });
-        btnRight.addEventListener('mousedown', () => {
-            this.input.right = true;
-            btnRight.classList.add('active');
-        });
-        btnRight.addEventListener('mouseup', () => {
-            this.input.right = false;
-            btnRight.classList.remove('active');
-        });
-        btnRight.addEventListener('mouseleave', () => {
-            this.input.right = false;
-            btnRight.classList.remove('active');
-        });
+        btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); this.input.right = true; btnRight.classList.add('active'); });
+        btnRight.addEventListener('touchend', (e) => { e.preventDefault(); this.input.right = false; btnRight.classList.remove('active'); });
+        btnRight.addEventListener('mousedown', () => { this.input.right = true; btnRight.classList.add('active'); });
+        btnRight.addEventListener('mouseup', () => { this.input.right = false; btnRight.classList.remove('active'); });
+        btnRight.addEventListener('mouseleave', () => { this.input.right = false; btnRight.classList.remove('active'); });
 
-        // Кнопка прыжка
         btnJump.addEventListener('touchstart', (e) => {
             e.preventDefault();
             if (this.state === 'playing') {
                 this.player.jump(false);
                 this.sound.jump();
-                this.particles.emit(
-                    this.player.x + this.player.width/2,
-                    this.player.y + this.player.height,
-                    '#a29bfe', 8, { speed: 4, upward: 2 }
-                );
+                this.particles.emit(this.player.x + this.player.width/2, this.player.y + this.player.height, '#a29bfe', 8, { speed: 4, upward: 2 });
             }
             btnJump.classList.add('active');
         });
-        btnJump.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            btnJump.classList.remove('active');
-        });
+        btnJump.addEventListener('touchend', (e) => { e.preventDefault(); btnJump.classList.remove('active'); });
         btnJump.addEventListener('mousedown', () => {
             if (this.state === 'playing') {
                 this.player.jump(false);
                 this.sound.jump();
-                this.particles.emit(
-                    this.player.x + this.player.width/2,
-                    this.player.y + this.player.height,
-                    '#a29bfe', 8, { speed: 4, upward: 2 }
-                );
+                this.particles.emit(this.player.x + this.player.width/2, this.player.y + this.player.height, '#a29bfe', 8, { speed: 4, upward: 2 });
             }
             btnJump.classList.add('active');
         });
-        btnJump.addEventListener('mouseup', () => {
-            btnJump.classList.remove('active');
-        });
-    }
-
-    handleTouch(touches) {
-        // Сбрасываем
-        this.input.left = false;
-        this.input.right = false;
-
-        // Проверяем каждую точку касания
-        for (let i = 0; i < touches.length; i++) {
-            const touch = touches[i];
-            const x = touch.clientX;
-            const width = window.innerWidth;
-
-            // Левая половина экрана — движение влево
-            if (x < width / 2) {
-                this.input.left = true;
-            }
-            // Правая половина (кроме нижней правой части где прыжок) — движение вправо
-            else if (x > width / 2 && x < width - 80) {
-                this.input.right = true;
-            }
-        }
-    }
-
-    handleTouchEnd(e) {
-        // Проверяем оставшиеся касания
-        if (e.changedTouches.length > 0) {
-            setTimeout(() => {
-                const remainingTouches = document.querySelectorAll('.mobile-btn.active');
-                if (remainingTouches.length === 0) {
-                    this.input.left = false;
-                    this.input.right = false;
-                }
-            }, 50);
-        }
+        btnJump.addEventListener('mouseup', () => { btnJump.classList.remove('active'); });
     }
 
     startGame() {
@@ -755,11 +626,8 @@ class Game {
         document.getElementById('startScreen').classList.add('hidden');
         document.getElementById('gameOverScreen').classList.add('hidden');
         
-        // Показываем мобильные кнопки только на мобильных
         const controls = document.getElementById('mobileControls');
-        if (controls) {
-            controls.style.display = this.isMobile ? 'flex' : 'none';
-        }
+        if (controls) controls.style.display = this.isMobile ? 'flex' : 'none';
     }
 
     restart() {
@@ -768,20 +636,14 @@ class Game {
         document.getElementById('gameOverScreen').classList.add('hidden');
         
         const controls = document.getElementById('mobileControls');
-        if (controls) {
-            controls.style.display = this.isMobile ? 'flex' : 'none';
-        }
+        if (controls) controls.style.display = this.isMobile ? 'flex' : 'none';
     }
 
     useSuperJump() {
         if (this.score > 0) {
             this.player.jump(true);
             this.sound.superJump();
-            this.particles.emit(
-                this.player.x + this.player.width/2,
-                this.player.y + this.player.height,
-                '#fdcb6e', 15, { speed: 8, upward: 3, shape: 'star' }
-            );
+            this.particles.emit(this.player.x + this.player.width/2, this.player.y + this.player.height, '#fdcb6e', 15, { speed: 8, upward: 3, shape: 'star' });
         } else {
             this.player.jump(false);
             this.sound.jump();
@@ -924,12 +786,7 @@ class Game {
         if (this.combo > 3) this.sound.combo();
 
         const color = CONFIG.colors.collectibles[item.type];
-        this.particles.emit(
-            item.x + item.width/2,
-            item.y - this.cameraY + item.height/2,
-            color, 20,
-            { speed: 6, shape: item.type === 'star' ? 'star' : 'circle', upward: 4 }
-        );
+        this.particles.emit(item.x + item.width/2, item.y - this.cameraY + item.height/2, color, 20, { speed: 6, shape: item.type === 'star' ? 'star' : 'circle', upward: 4 });
 
         const comboEl = document.getElementById('combo');
         comboEl.classList.add('pulse');
