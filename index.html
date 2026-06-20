@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>БАНДИТ</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="game-container">
+        <!-- Интерфейс поверх игрового поля -->
         <div class="ui-overlay">
             <div class="ui-panel">
                 <span class="ui-label">СЧЁТ</span>
@@ -25,40 +26,80 @@
 
         <canvas id="gameCanvas"></canvas>
 
+        <!-- Стартовый экран -->
         <div id="startScreen" class="screen">
             <div class="screen-content">
                 <h1 class="game-title">БАНДИТ</h1>
                 <p class="game-subtitle">Прыгай · Собирай · Выживай</p>
 
+                <!-- Имя игрока -->
+                <div class="name-input-wrap">
+                    <input
+                        type="text"
+                        id="playerName"
+                        class="player-name-input"
+                        placeholder="Ваше имя"
+                        maxlength="20"
+                        autocomplete="off"
+                    />
+                </div>
+
+                <!-- Выбор сложности -->
+                <div class="difficulty-selector">
+                    <button class="difficulty-btn" data-diff="easy">Легко</button>
+                    <button class="difficulty-btn active" data-diff="medium">Средне</button>
+                    <button class="difficulty-btn" data-diff="hard">Сложно</button>
+                </div>
+
+                <!-- Загрузка аватара -->
                 <div class="avatar-upload">
                     <div class="avatar-preview" id="avatarPreview">
-                        <div class="avatar-placeholder"></div>
+                        <div class="avatar-placeholder">📷</div>
                         <div class="avatar-loader" id="avatarLoader">
                             <div class="loader-spinner"></div>
                             <span>Обработка...</span>
                         </div>
                     </div>
                     <label for="avatarInput" class="btn-avatar">Загрузить лицо</label>
-                    <input type="file" id="avatarInput" accept="image/*" style="display:none">
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none" />
                     <p class="avatar-hint">✨ Белый фон удалится автоматически</p>
                     <button id="clearAvatar" class="btn-clear-avatar" style="display:none">✕ Убрать</button>
                 </div>
 
+                <!-- Таблица рекордов (скрыта по умолчанию) -->
+                <div id="leaderboard" class="leaderboard" style="display:none;">
+                    <h3>🏆 Топ‑10</h3>
+                    <div id="leaderboardList" class="leaderboard-list"></div>
+                </div>
+
+                <!-- Кнопки управления -->
                 <div class="controls-hint">
                     <div class="key">←</div>
                     <div class="key">→</div>
                     <div class="key">␣</div>
                 </div>
                 <p class="controls-text">Стрелки — движение · Пробел — супер-прыжок</p>
-                <button id="startBtn" class="btn-start">НАЧАТЬ ИГРУ</button>
+
+                <div class="action-buttons">
+                    <button id="startBtn" class="btn-start">НАЧАТЬ ИГРУ</button>
+                    <button id="showLeaderboardBtn" class="btn-leaderboard">🏆 Рекорды</button>
+                </div>
             </div>
         </div>
 
+        <!-- Экран Game Over -->
         <div id="gameOverScreen" class="screen hidden">
             <div class="screen-content">
                 <h1 class="game-title gameover">GAME OVER</h1>
                 <p class="final-score">Счёт: <span id="finalScore">0</span></p>
-                <p class="best-score">Рекорд: <span id="bestScore">0</span></p>
+                <p class="best-score">Ваш рекорд: <span id="bestScore">0</span></p>
+
+                <!-- Таблица рекордов на Game Over -->
+                <div id="gameOverLeaderboard" class="leaderboard">
+                    <h3>🏆 Топ‑10</h3>
+                    <div id="gameOverLeaderboardList" class="leaderboard-list"></div>
+                </div>
+
                 <button id="restartBtn" class="btn-start">ЗАНОВО</button>
             </div>
         </div>
