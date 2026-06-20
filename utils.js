@@ -1,5 +1,3 @@
-// ============= UTILS.JS =============
-
 // Полифилл для roundRect
 if (!CanvasRenderingContext2D.prototype.roundRect) {
     CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, radii) {
@@ -19,7 +17,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
     };
 }
 
-// Удаление белого фона с плавным переходом
+// Удаление белого фона
 function removeWhiteBackground(img, options = {}) {
     const threshold = options.threshold || 235;
     const smoothness = options.smoothness || 25;
@@ -69,7 +67,6 @@ function removeWhiteBackground(img, options = {}) {
     });
 }
 
-// Вектор
 class Vector {
     constructor(x = 0, y = 0) { this.x = x; this.y = y; }
     add(v) { return new Vector(this.x + v.x, this.y + v.y); }
@@ -79,7 +76,6 @@ class Vector {
     clone() { return new Vector(this.x, this.y); }
 }
 
-// Частица
 class Particle {
     constructor(x, y, color, options = {}) {
         this.pos = new Vector(x, y);
@@ -138,7 +134,6 @@ class Particle {
     isDead() { return this.life <= 0; }
 }
 
-// Система частиц
 class ParticleSystem {
     constructor() { this.particles = []; }
 
@@ -156,7 +151,6 @@ class ParticleSystem {
     draw(ctx) { this.particles.forEach(p => p.draw(ctx)); }
 }
 
-// Звук
 class SoundEngine {
     constructor() { this.ctx = null; this.initialized = false; }
 
@@ -194,7 +188,6 @@ class SoundEngine {
     }
 }
 
-// Утилиты
 function randomRange(min, max) { return Math.random() * (max - min) + min; }
 function randomChoice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function lightenColor(hex, amount) {
