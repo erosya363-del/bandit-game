@@ -2,21 +2,25 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>БАНДИТ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>БАНДИТ — Человек-Паук</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="game-container">
-        <!-- Интерфейс поверх игрового поля -->
+        <!-- UI overlay -->
         <div class="ui-overlay">
             <div class="ui-panel">
                 <span class="ui-label">СЧЁТ</span>
                 <span id="score">0</span>
             </div>
+            <div class="ui-panel ui-panel-rank">
+                <span class="ui-label">РЕЙТИНГ</span>
+                <span id="liveRank">—</span>
+            </div>
             <div class="ui-panel">
-                <span class="ui-label">КОМБО</span>
-                <span id="combo">x1</span>
+                <span class="ui-label">КОМБО·ПРЫЖ</span>
+                <span id="combo">x1 · ⬆2</span>
             </div>
             <div class="ui-panel">
                 <span class="ui-label">ЖИЗНИ</span>
@@ -26,13 +30,23 @@
 
         <canvas id="gameCanvas"></canvas>
 
-        <!-- Стартовый экран -->
+        <!-- Mobile controls -->
+        <div id="mobileControls" class="mobile-controls">
+            <div class="mobile-buttons-left">
+                <button class="mobile-btn" id="btnLeft" aria-label="Влево">◀</button>
+                <button class="mobile-btn" id="btnRight" aria-label="Вправо">▶</button>
+            </div>
+            <div class="mobile-buttons-right">
+                <button class="mobile-btn jump-btn" id="btnJump" aria-label="Прыжок">⇧</button>
+            </div>
+        </div>
+
+        <!-- Start screen -->
         <div id="startScreen" class="screen">
             <div class="screen-content">
                 <h1 class="game-title">БАНДИТ</h1>
-                <p class="game-subtitle">Прыгай · Собирай · Выживай</p>
+                <p class="game-subtitle">🕷️ Человек-Паук · Прыжки · Рейтинг</p>
 
-                <!-- Имя игрока -->
                 <div class="name-input-wrap">
                     <input
                         type="text"
@@ -41,17 +55,18 @@
                         placeholder="Ваше имя"
                         maxlength="20"
                         autocomplete="off"
+                        inputmode="text"
+                        autocapitalize="none"
                     />
+                    <p class="input-error" id="nameError">Введите имя: 2–20 букв или цифр</p>
                 </div>
 
-                <!-- Выбор сложности -->
                 <div class="difficulty-selector">
-                    <button class="difficulty-btn" data-diff="easy">Легко</button>
-                    <button class="difficulty-btn active" data-diff="medium">Средне</button>
-                    <button class="difficulty-btn" data-diff="hard">Сложно</button>
+                    <button type="button" class="difficulty-btn" data-diff="easy">Легко</button>
+                    <button type="button" class="difficulty-btn active" data-diff="medium">Средне</button>
+                    <button type="button" class="difficulty-btn" data-diff="hard">Сложно</button>
                 </div>
 
-                <!-- Загрузка аватара -->
                 <div class="avatar-upload">
                     <div class="avatar-preview" id="avatarPreview">
                         <div class="avatar-placeholder">📷</div>
@@ -66,41 +81,40 @@
                     <button id="clearAvatar" class="btn-clear-avatar" style="display:none">✕ Убрать</button>
                 </div>
 
-                <!-- Таблица рекордов (скрыта по умолчанию) -->
                 <div id="leaderboard" class="leaderboard" style="display:none;">
                     <h3>🏆 Топ‑10</h3>
                     <div id="leaderboardList" class="leaderboard-list"></div>
                 </div>
 
-                <!-- Кнопки управления -->
                 <div class="controls-hint">
                     <div class="key">←</div>
                     <div class="key">→</div>
                     <div class="key">␣</div>
                 </div>
-                <p class="controls-text">Стрелки — движение · Пробел — супер-прыжок</p>
+                <p class="controls-text">Водите пальцем — ходьба · Тап / Пробел / ⇧ — прыжок (макс. 2 в воздухе)</p>
 
                 <div class="action-buttons">
-                    <button id="startBtn" class="btn-start">НАЧАТЬ ИГРУ</button>
-                    <button id="showLeaderboardBtn" class="btn-leaderboard">🏆 Рекорды</button>
+                    <button type="button" id="startBtn" class="btn-start">НАЧАТЬ ИГРУ</button>
+                    <button type="button" id="showLeaderboardBtn" class="btn-leaderboard">🏆 Рекорды</button>
                 </div>
             </div>
         </div>
 
-        <!-- Экран Game Over -->
+        <!-- Game Over screen -->
         <div id="gameOverScreen" class="screen hidden">
             <div class="screen-content">
                 <h1 class="game-title gameover">GAME OVER</h1>
+                <p class="player-name-display">Игрок: <span id="gameOverPlayerName">—</span></p>
                 <p class="final-score">Счёт: <span id="finalScore">0</span></p>
                 <p class="best-score">Ваш рекорд: <span id="bestScore">0</span></p>
+                <p class="rank-display" id="rankDisplay"></p>
 
-                <!-- Таблица рекордов на Game Over -->
                 <div id="gameOverLeaderboard" class="leaderboard">
                     <h3>🏆 Топ‑10</h3>
                     <div id="gameOverLeaderboardList" class="leaderboard-list"></div>
                 </div>
 
-                <button id="restartBtn" class="btn-start">ЗАНОВО</button>
+                <button type="button" id="restartBtn" class="btn-start">ЗАНОВО</button>
             </div>
         </div>
     </div>
